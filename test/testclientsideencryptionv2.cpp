@@ -84,13 +84,13 @@ private slots:
         QVERIFY(!publicKey.isNull());
         QVERIFY(!privateKey.isEmpty());
 
-        _account->e2e()->_certificate = cert;
-        _account->e2e()->_publicKey = publicKey;
-        _account->e2e()->_privateKey = privateKey;
+        _account->e2e()->setCertificate(cert);
+        _account->e2e()->setPublicKey(publicKey);
+        _account->e2e()->setPrivateKey(privateKey);
 
-        _secondAccount->e2e()->_certificate = cert;
-        _secondAccount->e2e()->_publicKey = publicKey;
-        _secondAccount->e2e()->_privateKey = privateKey;
+        _secondAccount->e2e()->setCertificate(cert);
+        _secondAccount->e2e()->setPublicKey(publicKey);
+        _secondAccount->e2e()->setPrivateKey(privateKey);
         
     }
 
@@ -135,7 +135,7 @@ private slots:
             const auto encryptedMetadataKey = QByteArray::fromBase64(folderUserObject.value("encryptedMetadataKey").toString().toUtf8());
 
             if (!encryptedMetadataKey.isEmpty()) {
-                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(encryptedMetadataKey);
+                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(_account->e2e()->sslEngine(), encryptedMetadataKey);
                 if (decryptedMetadataKey.isEmpty()) {
                     break;
                 }
@@ -206,11 +206,11 @@ private slots:
         encryptedFile.initializationVector = EncryptionHelper::generateRandom(16);
         metadata->addEncryptedFile(encryptedFile);
 
-        QVERIFY(metadata->addUser(_secondAccount->davUser(), _secondAccount->e2e()->_certificate));
+        QVERIFY(metadata->addUser(_secondAccount->davUser(), _secondAccount->e2e()->getCertificate()));
 
         QVERIFY(metadata->removeUser(_secondAccount->davUser()));
 
-        QVERIFY(metadata->addUser(_secondAccount->davUser(), _secondAccount->e2e()->_certificate));
+        QVERIFY(metadata->addUser(_secondAccount->davUser(), _secondAccount->e2e()->getCertificate()));
 
         const auto encryptedMetadata = metadata->encryptedMetadata();
         QVERIFY(!encryptedMetadata.isEmpty());
@@ -236,7 +236,7 @@ private slots:
             const auto encryptedMetadataKey = QByteArray::fromBase64(folderUserObject.value("encryptedMetadataKey").toString().toUtf8());
 
             if (!encryptedMetadataKey.isEmpty()) {
-                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(encryptedMetadataKey);
+                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(_account->e2e()->sslEngine(), encryptedMetadataKey);
                 if (decryptedMetadataKey.isEmpty()) {
                     break;
                 }
@@ -334,7 +334,7 @@ private slots:
             const auto encryptedMetadataKey = QByteArray::fromBase64(folderUserObject.value("encryptedMetadataKey").toString().toUtf8());
 
             if (!encryptedMetadataKey.isEmpty()) {
-                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(encryptedMetadataKey);
+                const auto decryptedMetadataKey = metadata->decryptDataWithPrivateKey(_account->e2e()->sslEngine(), encryptedMetadataKey);
                 if (decryptedMetadataKey.isEmpty()) {
                     break;
                 }

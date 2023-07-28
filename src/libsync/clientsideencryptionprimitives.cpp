@@ -16,14 +16,6 @@
 
 namespace OCC
 {
-Bio::Bio()
-    : _bio(BIO_new(BIO_s_mem()))
-{
-}
-Bio::~Bio()
-{
-    BIO_free_all(_bio);
-}
 Bio::operator const BIO *() const
 {
     return _bio;
